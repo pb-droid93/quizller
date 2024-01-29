@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:quizller/quiz_brain.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
+
+QuizBrain quizBrain = QuizBrain();
 
 class QuizPage extends StatefulWidget {
   const QuizPage({Key? key}) : super(key: key);
@@ -10,19 +14,39 @@ class QuizPage extends StatefulWidget {
 class _QuizPageState extends State<QuizPage> {
   List<Icon> scoreKeeper = [];
 
-  List<String> question = [
-    'you can lead a cow down stairs but not upstairs.',
-    'Approximately one quarter of huma bones are in the feet.',
-    'A slug\'s blood is green.'
-  ];
+  void checkAnswer(bool userPickedAnswer) {
+    bool correctAns = quizBrain.getAnswerText();
 
-  List<bool> answer = [
-    false,
-    true,
-    false,
-  ];
+    setState(() {
+      if (quizBrain.nextQuestion() == false) {
+        _onBasicAlertPressed(context);
+        return;
+      }
+      if (userPickedAnswer == correctAns) {
+        scoreKeeper.add(
+          const Icon(
+            Icons.check,
+            color: Colors.green,
+          ),
+        );
+      } else {
+        scoreKeeper.add(
+          const Icon(
+            Icons.close,
+            color: Colors.red,
+          ),
+        );
+      }
+    });
+  }
 
-  int indexValue = 0;
+  void _onBasicAlertPressed(context) {
+    Alert(
+      context: context,
+      title: "awesome",
+      desc: "close not valid",
+    ).show();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +60,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: const EdgeInsets.all(20.0),
             child: Center(
               child: Text(
-                question[indexValue],
+                quizBrain.getQuestionText(),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 20,
@@ -51,30 +75,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: const EdgeInsets.all(16.0),
             child: TextButton(
               onPressed: () {
-                setState(() {
-                  if (indexValue == 2) {
-                    indexValue = 0;
-                  } else {
-                    indexValue++;
-                  }
-
-                  bool correctAns = answer[indexValue];
-                  if (correctAns == true) {
-                    scoreKeeper.add(
-                      const Icon(
-                        Icons.check,
-                        color: Colors.green,
-                      ),
-                    );
-                  } else {
-                    scoreKeeper.add(
-                      const Icon(
-                        Icons.close,
-                        color: Colors.red,
-                      ),
-                    );
-                  }
-                });
+                checkAnswer(true);
               },
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(Colors.green),
@@ -95,30 +96,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: const EdgeInsets.all(16.0),
             child: TextButton(
               onPressed: () {
-                setState(() {
-                  if (indexValue == 2) {
-                    indexValue = 0;
-                  } else {
-                    indexValue++;
-                  }
-
-                  bool correctAns = answer[indexValue];
-                  if (correctAns == false) {
-                    scoreKeeper.add(
-                      const Icon(
-                        Icons.check,
-                        color: Colors.green,
-                      ),
-                    );
-                  } else {
-                    scoreKeeper.add(
-                      const Icon(
-                        Icons.close,
-                        color: Colors.red,
-                      ),
-                    );
-                  }
-                });
+                checkAnswer(false);
               },
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(Colors.red),
@@ -134,10 +112,13 @@ class _QuizPageState extends State<QuizPage> {
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: scoreKeeper,
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              children: scoreKeeper,
+            ),
           ),
         ),
       ],
