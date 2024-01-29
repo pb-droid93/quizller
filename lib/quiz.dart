@@ -20,22 +20,22 @@ class _QuizPageState extends State<QuizPage> {
     setState(() {
       if (quizBrain.nextQuestion() == false) {
         _onBasicAlertPressed(context);
-        return;
-      }
-      if (userPickedAnswer == correctAns) {
-        scoreKeeper.add(
-          const Icon(
-            Icons.check,
-            color: Colors.green,
-          ),
-        );
       } else {
-        scoreKeeper.add(
-          const Icon(
-            Icons.close,
-            color: Colors.red,
-          ),
-        );
+        if (userPickedAnswer == correctAns) {
+          scoreKeeper.add(
+            const Icon(
+              Icons.check,
+              color: Colors.green,
+            ),
+          );
+        } else {
+          scoreKeeper.add(
+            const Icon(
+              Icons.close,
+              color: Colors.red,
+            ),
+          );
+        }
       }
     });
   }
@@ -43,8 +43,8 @@ class _QuizPageState extends State<QuizPage> {
   void _onBasicAlertPressed(context) {
     Alert(
       context: context,
-      title: "awesome",
-      desc: "close not valid",
+      title: "Alert !",
+      desc: "Questionire end",
     ).show();
   }
 
